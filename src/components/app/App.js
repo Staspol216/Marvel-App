@@ -10,11 +10,13 @@ import decoration from '../../resources/img/vision.png';
 class App extends Component {
     state = {
         selectedChar: null,
+        activeChar: false
     }
 
     onCharSelected = (id) => {
         this.setState({
-            selectedChar: id
+            selectedChar: id,
+            activeChar: true
         })
     }
 
