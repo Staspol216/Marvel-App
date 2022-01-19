@@ -46,7 +46,6 @@ const ComicsList = () => {
 
             // const imgObjectFit = thumbnail.includes("image_not_available") ? { 'objectFit': 'unset' } : { 'objectFit': 'cover' };
 
-
             return (
                 <li
                     className="comics__item"
