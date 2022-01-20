@@ -2,16 +2,14 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import AppHeader from "../appHeader/AppHeader";
-import Spinner from '../spinner/Spinner'
-
+import Spinner from '../spinner/Spinner';
 
 const Page404 = lazy(() => import('../pages/404'));
 const MainPage = lazy(() => import('../pages/MainPage'));
 const ComicsPage = lazy(() => import('../pages/ComicsPage'));
-const SingleComicPage = lazy(() => import('../pages/singleComicPage'));
-
-
-
+const SingleComicLayout = lazy(() => import('../pages/singleComicLayout/SingleComicLayout'));
+const SingleCharacterLayout = lazy(() => import('../pages/singleCharacterLayout/SingleCharacterLayout'));
+const ItemSinglePage = lazy(() => import('../pages/ItemSinglePage'));
 
 const App = () => {
     return (
@@ -27,16 +25,19 @@ const App = () => {
                             <Route exact path="/comics">
                                 <ComicsPage />
                             </Route>
-                            <Route exact path="/comics/:comicId">
-                                <SingleComicPage />
+                            <Route exact path="/comics/:id">
+                                <ItemSinglePage Component={SingleComicLayout} dataType='comic' />
+                            </Route>
+                            <Route exact path="/characters/:id">
+                                <ItemSinglePage Component={SingleCharacterLayout} dataType='character' />
                             </Route>
                             <Route path="*">
                                 <Page404 />
                             </Route>
                         </Switch>
                     </Suspense>
-                </main >
-            </div >
+                </main>
+            </div>
         </Router>
     )
 }

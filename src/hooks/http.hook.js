@@ -4,12 +4,12 @@ export const useHttp = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const request = useCallback(async (url, method = 'GET', body = null, headers = { 'Content-Type': 'application/json' }) => {
+    const request = useCallback(async (url, method = 'GET', body = null, headers = {'Content-Type': 'application/json'}) => {
 
         setLoading(true);
 
         try {
-            const response = await fetch(url, { method, body, headers });
+            const response = await fetch(url, {method, body, headers});
 
             if (!response.ok) {
                 throw new Error(`Could not fetch ${url}, status: ${response.status}`);
@@ -19,7 +19,7 @@ export const useHttp = () => {
 
             setLoading(false);
             return data;
-        } catch (e) {
+        } catch(e) {
             setLoading(false);
             setError(e.message);
             throw e;
@@ -28,5 +28,5 @@ export const useHttp = () => {
 
     const clearError = useCallback(() => setError(null), []);
 
-    return { loading, request, error, clearError }
+    return {loading, request, error, clearError}
 }

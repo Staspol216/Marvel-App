@@ -1,73 +1,73 @@
-import './charSearchForm.scss';
-import useMarvelService from '../../services/MarvelService';
-
 import { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage as FormikErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
 
+import useMarvelService from '../../services/MarvelService';
+import ErrorMessage from '../errorMessage/ErrorMessage';
+
+import './charSearchForm.scss';
 
 const CharSearchForm = () => {
-
     const [char, setChar] = useState(null);
-    const [searchStatus, setSearchStatus] = useState(null);
+    const { loading, error, getCharacterByName, clearError } = useMarvelService();
 
-    const { getCharacterByName, clearError } = useMarvelService();
-
-
-    const onRequest = (values) => {
-        clearError();
-        setSearchStatus(false);
-        getCharacterByName(values.name)
-            .then(char => setChar(char))
-            .catch(() => setSearchStatus(true));
+    const onCharLoaded = (char) => {
+        setChar(char);
     }
 
-    console.log(char);
+    const updateChar = (name) => {
+        clearError();
 
-    const linkBtn = char ? <div className="char__search-wrapper">
-        <div className="char__search-success">There is! Visit page?</div>
-        <a href='#' className="button button__secondary">
-            <div className="inner">To page</div>
-        </a>
-    </div> : null;
+        getCharacterByName(name)
+            .then(onCharLoaded);
+    }
 
-    console.log(char == null);
-
-    const charNotFound = searchStatus ? <div className="char__search-error">
-        The character was not found. Check the name and try again
-    </div> : null;
+    const errorMessage = error ? <div className="char__search-critical-error"><ErrorMessage /></div> : null;
+    const results = !char ? null : char.length > 0 ?
+        <div className="char__search-wrapper">
+            <div className="char__search-success">There is! Visit {char[0].name} page?</div>
+            <Link to={`/characters/${char[0].id}`} className="button button__secondary">
+                <div className="inner">To page</div>
+            </Link>
+        </div> :
+        <div className="char__search-error">
+            The character was not found. Check the name and try again
+        </div>;
 
     return (
         <div className="char__search-form">
             <Formik
                 initialValues={{
-                    name: '',
+                    charName: ''
                 }}
                 validationSchema={Yup.object({
-                    name: Yup.string().required('This field is required')
+                    charName: Yup.string().required('This field is required')
                 })}
-                onSubmit={values => onRequest(values)}>
+                onSubmit={({ charName }) => {
+                    updateChar(charName);
+                }}
+            >
                 <Form>
-                    <label className="char__search-label" htmlFor="name">Or find a character by name:</label>
+                    <label className="char__search-label" htmlFor="charName">Or find a character by name:</label>
                     <div className="char__search-wrapper">
                         <Field
-                            id="name"
-                            name='name'
+                            id="charName"
+                            name='charName'
                             type='text'
                             placeholder="Enter name" />
-
                         <button
                             type='submit'
-                            className="button button__main">
+                            className="button button__main"
+                            disabled={loading}>
                             <div className="inner">find</div>
                         </button>
                     </div>
-                    <FormikErrorMessage component="div" className="char__search-error" name="name" />
+                    <FormikErrorMessage component="div" className="char__search-error" name="charName" />
                 </Form>
             </Formik>
-            {linkBtn}
-            {charNotFound}
+            {results}
+            {errorMessage}
         </div>
     )
 }
